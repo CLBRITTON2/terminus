@@ -11,3 +11,4 @@ mercurius.yaml
 CODEX-*.md
 node_modules
 ui/flo/dist
+/.mega/environment.yaml

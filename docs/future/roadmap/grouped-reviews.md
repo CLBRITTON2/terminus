@@ -6,4 +6,4 @@ tags: [epic, spike]
 milestone: v0.1.x
 ---
 
-instead of just running on big list of reviews in `rubric.yaml`, we should probably study and formalize a better way for singling out qualities, and grouping qualities.
+study whether reusable quality groups or rubric composition would improve on the existing named rubrics and repeatable `--quality` selection. identify where hand-authored lists cause real duplication, and define the remaining grouping need before adding a mechanism.

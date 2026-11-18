@@ -3,6 +3,7 @@ package canon
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -153,7 +154,19 @@ func ParseRubric(raw []byte) (Rubric, error) {
 	return r, nil
 }
 
+// ProjectIdentity names the project by the folder of the clone that owns
+// repoPath, so a linked git worktree resolves to its main clone's name rather
+// than the worktree folder's. outside a git repository, or when the common git
+// dir is not a '.git' folder (a bare repo), it is repoPath's own folder name.
 func ProjectIdentity(repoPath string) string {
 	clean := filepath.Clean(repoPath)
-	return filepath.Base(clean)
+	out, err := exec.Command("git", "-C", clean, "rev-parse", "--path-format=absolute", "--git-common-dir").Output()
+	if err != nil {
+		return filepath.Base(clean)
+	}
+	commonDir := filepath.Clean(strings.TrimSpace(string(out)))
+	if filepath.Base(commonDir) != ".git" {
+		return filepath.Base(clean)
+	}
+	return filepath.Base(filepath.Dir(commonDir))
 }

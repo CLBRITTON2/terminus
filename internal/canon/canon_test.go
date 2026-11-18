@@ -2,6 +2,7 @@ package canon
 
 import (
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -95,6 +96,24 @@ qualities:
 	_, _, _, err := LoadProjectRubric(store, filepath.Join(t.TempDir(), "sample"), DefaultRubric)
 	if err == nil || !strings.Contains(err.Error(), "project.repo mismatch") {
 		t.Fatalf("expected project.repo mismatch, got %v", err)
+	}
+}
+
+func TestProjectIdentityOfWorktreeIsMainCloneName(t *testing.T) {
+	clone := filepath.Join(t.TempDir(), "sample")
+	if err := os.MkdirAll(clone, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	git(t, clone, "init")
+	git(t, clone, "-c", "user.email=test@example.com", "-c", "user.name=Test User", "commit", "--allow-empty", "-m", "init")
+	worktree := filepath.Join(t.TempDir(), "feature-branch")
+	git(t, clone, "worktree", "add", worktree)
+
+	if got := ProjectIdentity(clone); got != "sample" {
+		t.Fatalf("clone identity: expected sample, got %q", got)
+	}
+	if got := ProjectIdentity(worktree); got != "sample" {
+		t.Fatalf("worktree identity: expected sample, got %q", got)
 	}
 }
 
@@ -193,6 +212,16 @@ qualities:
   - ref: go-conventions/project-wide
 `)
 	return root
+}
+
+func git(t *testing.T, dir string, args ...string) {
+	t.Helper()
+	cmd := exec.Command("git", append([]string{"-c", "commit.gpgsign=false"}, args...)...)
+	cmd.Dir = dir
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		t.Fatalf("git %v failed: %v\n%s", args, err, string(out))
+	}
 }
 
 func writeFile(t *testing.T, path string, content string) {

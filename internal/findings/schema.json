@@ -1,5 +1,4 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://terminus.local/schemas/findings.schema.json",
   "title": "Terminus findings",
   "description": "structured findings returned by a Terminus code reviewer; flat findings array items only",

@@ -1,6 +1,6 @@
 ---
 title: dead-pattern report names general-tier patterns
-state: inbox
+state: researching
 created: 2026-09-09
 tags: [enhancement]
 ---

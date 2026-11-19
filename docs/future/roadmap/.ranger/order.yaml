@@ -1,5 +1,7 @@
 horizon:
 researching:
+  - review-a-commit-and-untracked-files.md
+  - dead-pattern-report-names-general-tier-patterns.md
   - reference-model-reviews.md
   - multiple-review-passes.md
   - grouped-reviews.md
